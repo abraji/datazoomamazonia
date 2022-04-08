@@ -1,3 +1,10 @@
+# -*- coding: utf-8
+# Abraji (https://www.abraji.org.br)
+# Reinaldo Chaves (reinaldo@abraji.org.br)
+# Programa exemplo de como usaro pacote https://github.com/abraji/datazoomamazonia/blob/main/amazonia.R com R
+# Exploratory Data Analysis
+# 
+
 # Instalações, se necessário
 #if (!require("devtools")) install.packages("devtools")
 #devtools::install_github("ipeaGIT/geobr", subdir = "r-package")
