@@ -1,11 +1,11 @@
 # -*- coding: utf-8
 # Abraji (https://www.abraji.org.br)
 # Reinaldo Chaves (reinaldo@abraji.org.br)
-# Programa exemplo de como usaro pacote https://github.com/abraji/datazoomamazonia/blob/main/amazonia.R com R
+# Programa exemplo de como usar o pacote Data Zoom Amaz√¥nia (https://github.com/abraji/datazoomamazonia/blob/main/amazonia.R) com R
 # Exploratory Data Analysis
 # 
 
-# InstalaÁıes, se necess·rio
+# Instala√ß√µes, se necess√°rio
 #if (!require("devtools")) install.packages("devtools")
 #devtools::install_github("ipeaGIT/geobr", subdir = "r-package")
 #devtools::install_github("datazoompuc/datazoom.amazonia")
@@ -23,13 +23,13 @@ library(DT)
 
 
 # 1 - EMBARGOS DO IBAMA
-# Baixa do Data Zoom AmazÙnia as ¡reas Embargadas pelo Ibama
+# Baixa do Data Zoom Amaz√¥nia as √Åreas Embargadas pelo Ibama
 embargos <- load_ibama(dataset = "areas_embargadas", raw_data = TRUE, 
                     language = "pt", legal_amazon_only = FALSE)
 # Visualiza
 glimpse(embargos)
 
-# Retira sÌmbolos da coluna cpf_ou_cnpj
+# Retira s√≠mbolos da coluna cpf_ou_cnpj
 embargos$cpf_ou_cnpj <- gsub("\\.","",as.character(embargos$cpf_ou_cnpj))
 embargos$cpf_ou_cnpj <- gsub("\\-","",as.character(embargos$cpf_ou_cnpj))
 embargos$cpf_ou_cnpj <- gsub("\\/","",as.character(embargos$cpf_ou_cnpj))
@@ -39,23 +39,23 @@ deputados_eleitos <- get_candidates(year = "2018", position = "Deputado Federal"
 # Visualiza
 glimpse(deputados_eleitos)
 
-# Une os dois dataframes pelo CPF do infrator ambiental e CPF do candidato - verifica se s„o os mesmos
+# Une os dois dataframes pelo CPF do infrator ambiental e CPF do candidato - verifica se s√£o os mesmos
 joined_df <- inner_join(deputados_eleitos, embargos, 
                            by = c("CPF_CANDIDATO" = "cpf_ou_cnpj"))
 # Visualiza
 View(joined_df)
 
-# Mostra diretÛrio atual
+# Mostra diret√≥rio atual
 getwd()
 # salva resultado
-write.csv(anos,"Deputados eleitos em 2018 que tÍm embargos do Ibama.csv", row.names = FALSE) 
+write.csv(anos,"Deputados eleitos em 2018 que t√™m embargos do Ibama.csv", row.names = FALSE) 
 
 
 
 
 
-# 2 - CONCESS’ES LEGAIS DE MINERA«√O
-# Baixa informaÁıes das minas que est„o sendo exploradas legalmente no Brasil
+# 2 - CONCESS√ïES LEGAIS DE MINERA√á√ÉO
+# Baixa informa√ß√µes das minas que est√£o sendo exploradas legalmente no Brasil
 minera <- load_sigmine(dataset = 'sigmine_active', raw_data = TRUE, language = "pt")
 
 # Nomes das colunas
@@ -70,59 +70,59 @@ head(minera, 5)
 # Resumo e tipos das colunas
 glimpse(minera)
 
-# Quantos s„o processos divididos pela fase de exploraÁ„o
+# Quantos s√£o processos divididos pela fase de explora√ß√£o
 how_many <- unique(minera$fase)
 length(how_many)
 how_many
 
-# Retira a coluna de geometria em cÛpia do dataframe - est· com erro de fomataÁ„o
+# Retira a coluna de geometria em c√≥pia do dataframe - est√° com erro de fomata√ß√£o
 minera_no_geom <- sf::st_drop_geometry(minera)
 
 
-# Na fase CONCESS√O DE LAVRA, quais s„o as 20 empresas que mais tÍm registros 
-filter(minera_no_geom, fase=="CONCESS√O DE LAVRA") %>% 
+# Na fase CONCESS√ÉO DE LAVRA, quais s√£o as 20 empresas que mais t√™m registros 
+filter(minera_no_geom, fase=="CONCESS√ÉO DE LAVRA") %>% 
   group_by(nome) %>% 
   summarize(total=n()) %>%    
   arrange(desc(total)) %>% 
   head(20)
 
 
-# Na AmazÙnia e no Par·, quais s„o as subst‚ncias com mais lavra
-filter(minera_no_geom, (uf == "AM" | uf == "PA") & fase=="CONCESS√O DE LAVRA") %>% 
+# Na Amaz√¥nia e no Par√°, quais s√£o as subst√¢ncias com mais lavra
+filter(minera_no_geom, (uf == "AM" | uf == "PA") & fase=="CONCESS√ÉO DE LAVRA") %>% 
   group_by(subs) %>% 
   summarize(total=n()) %>%    
   arrange(desc(total)) %>% 
   head(10)
 
 
-# Empresas no AM e PA com CONCESS√O DE LAVRA para BAUXITA
-filter(minera_no_geom, (uf == "AM" | uf == "PA") & subs == "BAUXITA" & fase=="CONCESS√O DE LAVRA") %>% 
+# Empresas no AM e PA com CONCESS√ÉO DE LAVRA para BAUXITA
+filter(minera_no_geom, (uf == "AM" | uf == "PA") & subs == "BAUXITA" & fase=="CONCESS√ÉO DE LAVRA") %>% 
   group_by(nome) %>% 
   summarize(total=n()) %>%    
   arrange(desc(total)) %>% 
   head(10)
 
 
-# EvoluÁ„o da CONCESS√O DE LAVRA no AM
-#lag() - Calcula uma vers„o defasada de uma sÈrie temporal, deslocando a base de tempo de volta por um determinado n˙mero de observaÁıes
+# Evolu√ß√£o da CONCESS√ÉO DE LAVRA no AM
+#lag() - Calcula uma vers√£o defasada de uma s√©rie temporal, deslocando a base de tempo de volta por um determinado n√∫mero de observa√ß√µes
 
-#No caso aqui, podemos calcular a diferenÁa no n˙mero de CONCESS√O DE LAVRA ano apÛs ano
-anos <- filter(minera_no_geom, uf=="AM" & fase=="CONCESS√O DE LAVRA") %>% 
+#No caso aqui, podemos calcular a diferen√ßa no n√∫mero de CONCESS√ÉO DE LAVRA ano ap√≥s ano
+anos <- filter(minera_no_geom, uf=="AM" & fase=="CONCESS√ÉO DE LAVRA") %>% 
   group_by(ano) %>% 
   summarize(total=n()) %>%
   mutate(ano_anterior=lag(total), variacao=total-ano_anterior) 
 anos
 
-# Mostra diretÛrio atual
+# Mostra diret√≥rio atual
 getwd()
 # salva resultado
-write.csv(anos,"EvoluÁ„o da CONCESS√O DE LAVRA no AM.csv", row.names = FALSE) 
+write.csv(anos,"Evolu√ß√£o da CONCESS√ÉO DE LAVRA no AM.csv", row.names = FALSE) 
 
 
-# EvoluÁ„o de LICENCIAMENTO no AM
-#lag() - Calcula uma vers„o defasada de uma sÈrie temporal, deslocando a base de tempo de volta por um determinado n˙mero de observaÁıes
+# Evolu√ß√£o de LICENCIAMENTO no AM
+#lag() - Calcula uma vers√£o defasada de uma s√©rie temporal, deslocando a base de tempo de volta por um determinado n√∫mero de observa√ß√µes
 
-#No caso aqui, podemos calcular a diferenÁa no n˙mero de CONCESS√O DE LAVRA ano apÛs ano
+#No caso aqui, podemos calcular a diferen√ßa no n√∫mero de CONCESS√ÉO DE LAVRA ano ap√≥s ano
 anos <- filter(minera_no_geom, uf=="AM" & fase=="LICENCIAMENTO") %>% 
   group_by(ano) %>% 
   summarize(total=n()) %>%
@@ -130,11 +130,11 @@ anos <- filter(minera_no_geom, uf=="AM" & fase=="LICENCIAMENTO") %>%
 anos
 
 # salva resultado
-write.csv(anos,"EvoluÁ„o da LICENCIAMENTO no AM.csv", row.names = FALSE) 
+write.csv(anos,"Evolu√ß√£o da LICENCIAMENTO no AM.csv", row.names = FALSE) 
 
 
 # Fase de LICENCIAMENTO no AM
-# group_by pelo nome das empresas e subst‚ncias
+# group_by pelo nome das empresas e subst√¢ncias
 filter(minera_no_geom, uf=="AM" & fase=="LICENCIAMENTO") %>% 
   group_by(nome, subs) %>% 
   summarize(total=n()) %>% 
@@ -143,7 +143,7 @@ filter(minera_no_geom, uf=="AM" & fase=="LICENCIAMENTO") %>%
 
 
 # Fase de LICENCIAMENTO no AM
-# group_by pelo nome das empresa/pessoas e subst‚ncias
+# group_by pelo nome das empresa/pessoas e subst√¢ncias
 # apenas nos anos de 2019, 2020, 2021 e 2022
 filter(minera_no_geom, uf=="AM" & fase=="LICENCIAMENTO" &  (ano == 2019 | ano == 2020 | ano == 2021 | ano == 2022) ) %>% 
   group_by(nome, subs) %>% 
@@ -152,13 +152,13 @@ filter(minera_no_geom, uf=="AM" & fase=="LICENCIAMENTO" &  (ano == 2019 | ano ==
   head(20)
 
 
-# No PA, qual a porcentagem das subs em CONCESS√O DE LAVRA em relaÁ„o ao total geral
+# No PA, qual a porcentagem das subs em CONCESS√ÉO DE LAVRA em rela√ß√£o ao total geral
 percent_subs_pa <- minera_no_geom %>% 
   group_by(uf, subs) %>% 
-  filter(uf=="PA" & fase=="CONCESS√O DE LAVRA") %>% 
+  filter(uf=="PA" & fase=="CONCESS√ÉO DE LAVRA") %>% 
   summarize(total=n()) %>% 
   mutate(percent=total/sum(total, na.rm=T)*100) %>% 
   arrange(-percent)
 
-# Usando a biblioteca DT (DataTables) que nos permite criar tabelas pesquis·veis com o plug-in para jQuery
+# Usando a biblioteca DT (DataTables) que nos permite criar tabelas pesquis√°veis com o plug-in para jQuery
 datatable(percent_subs_pa)
