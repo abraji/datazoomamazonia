@@ -1,7 +1,7 @@
 # -*- coding: utf-8
 # Abraji (https://www.abraji.org.br)
 # Reinaldo Chaves (reinaldo@abraji.org.br)
-# Programa exemplo de como usar o pacote Data Zoom Amazônia (https://github.com/abraji/datazoomamazonia/blob/main/amazonia.R) com R
+# Programa exemplo de como usar o pacote Data Zoom Amazônia (https://github.com/datazoompuc/datazoom.amazonia) com R
 # Exploratory Data Analysis
 # 
 
